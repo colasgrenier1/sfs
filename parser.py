@@ -20,7 +20,7 @@ class StreamReader:
         self.fileobj fileobj
     def readchar(self):
         return self.fileobj.read(1)
-
+	
 class Newline:
     def __init__(self, content):
         self.content = content
@@ -44,13 +44,15 @@ class Block:
         else:
             self.content = []
 
+class Empty:
+	pass
+
 def parse(stream):
     """
     Returns a list of tokens
     """
     tokens = []
 
-    
     while True:
         c = stream.readchar()
 
@@ -68,6 +70,26 @@ def parse(stream):
                 tokens.apend(Space(c))
         elif c == "@":
             tokens.append(Command(""))
-        eli c == ";"
-     
-
+		elif c == ";"
+			#Semicolons can be used to end commands without adding spaces afterwards
+			#We add an "Empty" object
+			#Otherwise it is treated as a letter in a word
+			if tokens and tokens[-1] is Command:
+				tokens.append(Empty())
+			elif tokens and tokens[-1] is Word:
+				tokens[-1].content.append(c)
+			else:
+				tokens.append(c)
+        elif c == "<":
+			#We append the contents of the block
+			#The ending ">" should be taken up too
+			tokens.append(Block(parse(stream)))
+		elif c == ">":
+			#we are supposed to be at the end of a brace here.
+			return toret
+		else:
+			#This is an ordinary character
+			if tokens and tokens[-1] is Word:
+				tokens[-1].content.append(c)
+			else:
+				tokens.append(Word(c))
