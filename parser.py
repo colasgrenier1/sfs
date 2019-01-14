@@ -1,8 +1,3 @@
-
-(No subject)
-Nicolas Grenier
-Today, 12:56 PMNicolas Grenier
-
 """
 
 
@@ -12,8 +7,6 @@ Today, 12:56 PMNicolas Grenier
 
 
 """
-
-
 
 class StreamReader:
 	def __init__(self, fileobj):
@@ -44,9 +37,6 @@ class Block:
 		else:
 			self.content = []
 
-class Empty:
-	pass
-
 def parse(stream):
 	"""
 	Returns a list of tokens
@@ -72,10 +62,10 @@ def parse(stream):
 			tokens.append(Command(""))
 		elif c == ";"
 			#Semicolons can be used to end commands without adding spaces afterwards
-			#We add an "Empty" object
+			#We add a zero-length space
 			#Otherwise it is treated as a letter in a word
 			if tokens and tokens[-1] is Command:
-				tokens.append(Empty())
+				tokens.append(Space(None))
 			elif tokens and tokens[-1] is Word:
 				tokens[-1].content.append(c)
 			else:
