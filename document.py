@@ -57,6 +57,12 @@ class Space:
 	def __init__(self, breaking=True, width=None):
 		self.breaking = breaking
 
+class LineBreak:
+	"""
+	This is the child of a Text object.
+	"""
+	pass
+		
 class Text:
 	pass
 
@@ -76,8 +82,26 @@ class Section:
 	"""
 	A section is a collection of paragraphs, and contains stable
 	page format and header format etc.
+	If not broken and if column configuration is the same, and if
+	margins, etc. are the same, it is possible
+	that there will be multiple sections on the same page. In this case
+	the header/footer information will be that of the last section to be
+	configured on that page.
+	
+	The headers and the footers must be Paragraph objects, with the
+	known escape sequences.
 	"""
 	def __init__(self,
+		break = False, #Whether to start this section on a new page
+		columns = 1, #Number of columns
+		column_separation = None, #Space between columns
+		column_flush = False, #Wether to make the end of two columns flush (like \multicol and not \multicol*)
+		margin_top =
+		margin_bottom = 
+		margin_left_even =
+		margin_left_odd = 
+		margin_right_even = 
+		margin_right_odd =
 		page_height = LETTER_HEIGHT,
 		page_width = LETTER_WIDTH,
 		page_orientation = "portrait"
