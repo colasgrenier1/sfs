@@ -6,16 +6,13 @@ from sfs.common import Error
 import sfs.document as document
 import sfs.parser as parser
 
-class ExecutionError(Error):
-	pass
-
 class CommandNotFound(Error):
 	pass
 
 class State:
 	"""
 	A "State" contains for now command definitions,
-	which can vary throughout the document and thua necessitate
+	which can vary throughout the document and thus necessitate
 	a new data structure.
 	"""
 
@@ -27,10 +24,10 @@ class State:
 
 	def set(self, name, command):
 		"""
-		
+
 		"""
 		self.commands[name] = command
-		
+
 
 	def resolve(self, name):
 		"""
@@ -46,6 +43,16 @@ class Command:
 	Base command class.
 	"""
 	pass
+
+class SimpleCommand:
+	"""
+	Simple command.
+	"""
+	def __init__(self, run=None):
+		self.run = run
+
+	def run(self, doc, state, args):
+		pass
 
 class NumberedParameterCommand:
 	"""
@@ -68,12 +75,25 @@ class NumberedParameterCommand:
 		Subclass this.
 		"""
 		pass
-	
+
 	def execute(self, doc, state, tokens):
-		
 		#We try to eat up as many arguments as we need.
-
-
+		#skipping spaces, failing on newline
+		count = 0
+		while count < self.nargs:
+			tok = tokens.pop(0)
+			if type(tok) is parser.Space:
+				pass
+			elif type(tok) is parser.Newline:
+				raise Exception("COMMAND %s DID NOT RECEIVE ENOUGH ARGUMENTS UNTIL NEWLINE!" % (tok.name,))
+			elif type(tok) is parser.Word:
+				pass
+			elif type(tok) is parser.Block:
+				pass
+			elif type(tok) is parser.Command:
+				pass
+			else:
+				raise Error()
 
 class BlockCommand:
 	"""
@@ -84,12 +104,31 @@ class BlockCommand:
 
 	NOTE: this command preserves newline and space tokens.
 	"""
-	pass
-	
+
+	def run(self, doc, state, content):
+		"""
+		This function exeutes with the tokens contained
+		between the invocation and @end
+		"""
+		pass
+
+	def execute(self, doc, state, tokens):
+		pass
+
+
+
 
 def execute(doc, state, tokens):
 	"""
-	
-	"""
-	pass
+	Execute on a sttring of tokens.
 
+	Essentially this adds to the document....
+	"""
+	#We execute on all tokens
+	while tokens:
+
+		#We take in a token
+		tok = tokens.pop(0)
+
+		if tok.type == "word":
+			

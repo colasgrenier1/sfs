@@ -13,7 +13,7 @@ UNIT_EQUIVALENCE = {
 	"in" : {
 			"in" : 1,
 			"cm" : 2.54,
-			"pt" : 71
+			"pt" : 72
 		}
 	"pt" : {
 			"cm" : 0.0352778,
@@ -30,11 +30,11 @@ class Value:
 		self.value = value
 		self._unit = None
 		self.unit = unit
-		
+
 	@property
 	def unit(self):
 		return self.unit
-	
+
 	@unit.set
 	def set_unit(self, unit):
 		if unit not in UNITS:
@@ -77,8 +77,8 @@ class TextConfiguration:
 		self.font_style = font_style
 		self.font_weight = font_weight
 		self.color = color
-		self.background_color
-		
+		self.background_color = background_color
+
 
 class Character:
 	"""
@@ -99,7 +99,7 @@ class LineBreak:
 	This is the child of a Text object.
 	"""
 	pass
-		
+
 class Text:
 	"""
 	Contains text of one style.
@@ -120,11 +120,19 @@ class Text:
 			self.style = TextConfiguration()
 		else:
 			self.style = style
+class Link:
+	pass
+
+class Footnote:
+	pass
 
 class Image:
 	pass
 
-class Link:
+class Equation:
+	pass
+
+class MarginText:
 	pass
 
 class ParagraphConfiguration:
@@ -141,8 +149,8 @@ class ParagraphConfiguration:
 		self.left = None
 		self.right = None
 		self.line_spacing = None
-		
-		
+
+
 class Paragraph:
 	"""
 	This is a collection of document objects (such as the ones above).
@@ -158,42 +166,12 @@ class PageBreak:
 	Breaks a page, but keeps the same section
 	"""
 	pass
-	
-class Section:
-	"""
-	A section is a collection of paragraphs (and page breaks, etc.),
-	and contains stable page format and header format etc.
-	If not broken and if column configuration is the same, and if
-	margins, etc. are the same, it is possible
-	that there will be multiple sections on the same page. In this case
-	the header/footer information will be that of the last section to be
-	configured on that page.
-	
-	The headers and the footers must be Paragraph objects, with the
-	known escape sequences.
-	"""
-	def __init__(self,
-		break = False, #Whether to start this section on a new page
-		columns = 1, #Number of columns
-		column_separation = None, #Space between columns
-		column_flush = False, #Wether to make the end of two columns flush (like \multicol and not \multicol*)
-		margin_top =
-		margin_bottom = 
-		margin_left_even =
-		margin_left_odd = 
-		margin_right_even = 
-		margin_right_odd =
-		page_height = LETTER_HEIGHT,
-		page_width = LETTER_WIDTH,
-		page_orientation = "portrait"
 
-		self.paragraphs = []
 
-	):
-	
 class Document:
 	"""
-	A document is the highest level entity. It contains sections.
+	A document is the highest level entity. It contains paragraphs
+	for now but will eventually include sections.
 	"""
 	def __init__(self,
 		name =  None
@@ -201,3 +179,38 @@ class Document:
 		self.name = name
 
 		self.sections = []
+
+	def newpar(self, parconf=None):
+		"""
+		Creates a new paragraph with the same style as the previous or new one.
+		"""
+
+		##If we do not have a section we create one
+		#if not self.sections:
+		#	self.newsec()
+
+		#We create the parapraph
+		self.paragraphs.append(Paragraph())
+
+		#We set the style according to the specifications
+		if parconf is not None:
+			self..paragraphs[-1].configuration = parconf
+		else:
+			# #We search for the last paragraph
+			# for sec in reversed(self.sections):
+			# 	if sec.paragraphs:
+			# 		self.sections[-1].paragraphs[-1].configuration = sec.paragraphs[1].configuration
+			# 		break
+			# 	else:
+			# 		#We did not have a P so
+			# 		self.sections[-1].paragraphs[-1].configuration = ParagraphConfiguration()
+			if self.paragraphs[:-1]:
+				self.paragraphs[-1].configuration = self.paragraphs[-2].configuration
+			else:
+				self.paragraphs[-1].configuration = ParagraphConfiguration()
+
+	#def newsec(self, secconf=None):
+	#	"""
+	#	Creates a new section with the same style as the previous.
+	#	"""
+	#	Section
